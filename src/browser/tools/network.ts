@@ -26,13 +26,26 @@ const requests = defineTabTool({
     name: 'browser_network_requests',
     title: 'List network requests',
     description: 'Returns all network requests since loading the page',
-    inputSchema: z.object({}),
+    inputSchema: z.object({
+      methods: z.array(z.string()).optional().describe('Filter by HTTP method (e.g., GET, POST)'),
+      resourceTypes: z.array(z.string()).optional().describe('Filter by resource type (e.g., document, script, image)')
+    }),
     type: 'readOnly',
   },
 
   handle: async (tab, params, response) => {
-    const requests = tab.requests();
-    [...requests.entries()].forEach(([req, res]) => response.addResult(renderRequest(req, res)));
+    const allRequests = tab.requests();
+    let filteredRequests = [...allRequests.entries()];
+
+    filteredRequests = filteredRequests.filter(([req]) => {
+      if (params.methods && !params.methods.includes(req.method()))
+        return false;
+      if (params.resourceTypes && !params.resourceTypes.includes(req.resourceType()))
+        return false;
+      return true;
+    });
+
+    filteredRequests.forEach(([req, res]) => response.addResult(renderRequest(req, res)));
   },
 });
 
