@@ -121,7 +121,7 @@ ${this._code.join('\n')}
       response.push(...renderModalStates(this._context, this._tabSnapshot.modalStates));
       response.push('');
     } else if (this._tabSnapshot) {
-      response.push(renderTabSnapshot(this._tabSnapshot));
+      response.push(renderTabSnapshot(this._tabSnapshot, this.toolArgs));
       response.push('');
     }
 
@@ -140,17 +140,17 @@ ${this._code.join('\n')}
   }
 }
 
-function renderTabSnapshot(tabSnapshot: TabSnapshot): string {
+function renderTabSnapshot(tabSnapshot: TabSnapshot, toolArgs: Record<string, any>): string {
   const lines: string[] = [];
 
-  if (tabSnapshot.consoleMessages.length) {
+  if (tabSnapshot.consoleMessages.length && toolArgs?.includeConsoleLog !== false) {
     lines.push(`### New console messages`);
     for (const message of tabSnapshot.consoleMessages)
       lines.push(`- ${trim(message.toString(), 100)}`);
     lines.push('');
   }
 
-  if (tabSnapshot.downloads.length) {
+  if (tabSnapshot.downloads.length && toolArgs?.includeDownload !== false) {
     lines.push(`### Downloads`);
     for (const entry of tabSnapshot.downloads) {
       if (entry.finished)
@@ -166,7 +166,7 @@ function renderTabSnapshot(tabSnapshot: TabSnapshot): string {
   lines.push(`- Page Title: ${tabSnapshot.title}`);
   lines.push(`- Page Snapshot:`);
   lines.push('```yaml');
-  lines.push(tabSnapshot.ariaSnapshot);
+  lines.push(toolArgs?.includeAriaSnapshot ? tabSnapshot.ariaSnapshot : tabSnapshot.desc || 'ARIA snapshot not included');
   lines.push('```');
 
   return lines.join('\n');
