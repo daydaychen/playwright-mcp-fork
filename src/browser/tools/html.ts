@@ -24,6 +24,7 @@ interface HtmlCleaningParams {
   removeInlineStyles: boolean;
   removeComments: boolean;
   removeMeta: boolean;
+  removeSvg: boolean;
   minify: boolean;
 }
 
@@ -37,7 +38,7 @@ const processHtmlCleaning = async (
   isFragment = false
 ): Promise<string> => {
   // Apply HTML cleaning if any option is enabled
-  if (options.removeScripts || options.removeStyles || options.removeInlineStyles || options.removeComments || options.removeMeta || options.minify) {
+  if (options.removeScripts || options.removeStyles || options.removeInlineStyles || options.removeComments || options.removeMeta || options.removeSvg || options.minify) {
     return await page.evaluate(
         ({ html, options, isFragment }: { html: string; options: HtmlCleaningParams; isFragment: boolean }) => {
         // Create a DOM parser to work with the HTML
@@ -75,6 +76,12 @@ const processHtmlCleaning = async (
           if (options.removeMeta) {
             const metaTags = container.querySelectorAll('meta');
             metaTags.forEach(meta => meta.remove());
+          }
+
+          // Remove SVG elements if requested
+          if (options.removeSvg) {
+            const svgElements = container.querySelectorAll('svg');
+            svgElements.forEach(svg => svg.remove());
           }
 
           // Remove HTML comments if requested
@@ -129,6 +136,7 @@ const getPageHTML = defineTabTool({
       removeInlineStyles: z.boolean().optional().default(true).describe('Remove inline style attributes from HTML elements (default: true).'),
       removeComments: z.boolean().optional().default(true).describe('Remove HTML comments (default: true).'),
       removeMeta: z.boolean().optional().default(false).describe('Remove meta tags from HTML (default: false).'),
+      removeSvg: z.boolean().optional().default(true).describe('Remove SVG elements from HTML (default: true).'),
       minify: z.boolean().optional().default(true).describe('Minify HTML by removing extra whitespace (default: true).'),
     }),
     type: 'readOnly',
@@ -179,6 +187,7 @@ const getPageHtmlWithLocator = defineTabTool({
       removeInlineStyles: z.boolean().optional().default(true).describe('Remove inline style attributes from HTML elements (default: true).'),
       removeComments: z.boolean().optional().default(true).describe('Remove HTML comments (default: true).'),
       removeMeta: z.boolean().optional().default(false).describe('Remove meta tags from HTML (default: false).'),
+      removeSvg: z.boolean().optional().default(true).describe('Remove SVG elements from HTML (default: true).'),
       minify: z.boolean().optional().default(true).describe('Minify HTML by removing extra whitespace (default: true).'),
     }),
     type: 'readOnly',
@@ -188,16 +197,16 @@ const getPageHtmlWithLocator = defineTabTool({
     const { locator, maxLength, timeout, ...cleaningParams } = params;
 
     response.addCode(`await page.locator(${JSON.stringify(locator)}).innerHTML();`);
-    const element = tab.page.locator(locator);
+    const locatorObj = tab.page.locator(locator);
 
     try {
-      await element.waitFor({ timeout });
+      await locatorObj.waitFor({ state: 'attached', timeout });
 
-      const count = await element.count();
+      const count = await locatorObj.count();
       if (count === 0)
         throw new Error(`No element found for locator: ${locator}`);
 
-      let html = await element.innerHTML();
+      let html = await locatorObj.innerHTML();
 
       // Apply HTML cleaning using helper function (for fragment HTML)
       html = await processHtmlCleaning(tab.page, html, cleaningParams, true); // isFragment = true for innerHTML
