@@ -28,7 +28,7 @@ const requests = defineTabTool({
     description: 'Returns all network requests since loading the page',
     inputSchema: z.object({
       methods: z.array(z.string()).optional().describe('Filter by HTTP method (e.g., GET, POST)'),
-      resourceTypes: z.array(z.string()).optional().describe('Filter by resource type (e.g., document, script, image)')
+      resourceTypes: z.array(z.string()).optional().default(['xhr', 'fetch', 'document']).describe('Filter by resource type (e.g., document, script, image)')
     }),
     type: 'readOnly',
   },
