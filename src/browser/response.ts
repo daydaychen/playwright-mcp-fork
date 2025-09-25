@@ -166,7 +166,7 @@ function renderTabSnapshot(tabSnapshot: TabSnapshot, toolArgs: Record<string, an
   lines.push(`- Page Title: ${tabSnapshot.title}`);
   lines.push(`- Page Snapshot:`);
   lines.push('```yaml');
-  lines.push(toolArgs?.includeAriaSnapshot ? tabSnapshot.ariaSnapshot : tabSnapshot.desc || 'ARIA snapshot not included');
+  lines.push(toolArgs?.includeAriaSnapshot !== false ? tabSnapshot.ariaSnapshot : tabSnapshot.desc || 'ARIA snapshot not included');
   lines.push('```');
 
   return lines.join('\n');
