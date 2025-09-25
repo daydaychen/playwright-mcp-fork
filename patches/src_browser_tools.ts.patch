@@ -1,0 +1,20 @@
+diff --git a/src/browser/tools.ts b/src/browser/tools.ts
+index b1e8059..9d51454 100644
+--- a/src/browser/tools.ts
++++ b/src/browser/tools.ts
+@@ -20,6 +20,7 @@ import dialogs from './tools/dialogs';
+ import evaluate from './tools/evaluate';
+ import files from './tools/files';
+ import form from './tools/form';
++import html from './tools/html';
+ import install from './tools/install';
+ import keyboard from './tools/keyboard';
+ import mouse from './tools/mouse';
+@@ -42,6 +43,7 @@ export const allTools: Tool<any>[] = [
+   ...evaluate,
+   ...files,
+   ...form,
++  ...html,
+   ...install,
+   ...keyboard,
+   ...navigate,

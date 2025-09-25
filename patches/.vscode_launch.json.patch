@@ -1,0 +1,24 @@
+diff --git a/.vscode/launch.json b/.vscode/launch.json
+new file mode 100644
+index 0000000..d6f936d
+--- /dev/null
++++ b/.vscode/launch.json
+@@ -0,0 +1,17 @@
++{
++    // Use IntelliSense to learn about possible attributes.
++    // Hover to view descriptions of existing attributes.
++    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
++    "version": "0.2.0",
++    "configurations": [
++        {
++            "name": "Attach",
++            "port": 9229,
++            "request": "attach",
++            "skipFiles": [
++                "<node_internals>/**"
++            ],
++            "type": "node"
++        }
++    ]
++}
+\ No newline at end of file

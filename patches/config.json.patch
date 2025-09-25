@@ -1,0 +1,23 @@
+diff --git a/config.json b/config.json
+new file mode 100644
+index 0000000..8eae011
+--- /dev/null
++++ b/config.json
+@@ -0,0 +1,17 @@
++{
++    "browser": {
++        "isolated": true,
++        "launchOptions": {
++            "headless": true,
++            "executablePath": "/Applications/Chromium.app/Contents/MacOS/Chromium"
++        }
++    },
++    "server": {
++        "port": 3232,
++        "host": "127.0.0.1"
++    },
++    "capabilities": [],
++    "imageResponses": "omit",
++    "saveTrace": false,
++    "outputDir": "logs"
++}
